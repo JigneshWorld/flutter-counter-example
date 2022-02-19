@@ -12,6 +12,9 @@ import '../../helpers/helpers.dart';
 
 class MockHomeTabCubit extends MockCubit<HomeTab> implements HomeTabCubit {}
 
+class MockCounterBloc extends MockBloc<CounterEvent, int>
+    implements CounterBloc {}
+
 void main() {
   group('HomeTabsPage', () {
     testWidgets('renders HomeTabsView', (tester) async {
@@ -22,21 +25,40 @@ void main() {
 
   group('HomeTabsView', () {
     late HomeTabCubit homeTabsCubit;
+    late CounterBloc counter1Bloc, counter2Bloc, counter3Bloc;
+    late Widget widget;
 
     setUp(() {
       homeTabsCubit = MockHomeTabCubit();
+      when(() => homeTabsCubit.state).thenReturn(HomeTab.counter1);
+      counter1Bloc = MockCounterBloc();
+      when(() => counter1Bloc.state).thenReturn(0);
+      counter2Bloc = MockCounterBloc();
+      when(() => counter2Bloc.state).thenReturn(0);
+      counter3Bloc = MockCounterBloc();
+      when(() => counter3Bloc.state).thenReturn(0);
+      widget = MultiBlocProvider(
+        providers: [
+          BlocProvider.value(
+            value: homeTabsCubit,
+          ),
+          BlocProvider<Counter1Bloc>.value(
+            value: counter1Bloc,
+          ),
+          BlocProvider<Counter2Bloc>.value(
+            value: counter2Bloc,
+          ),
+          BlocProvider<Counter3Bloc>.value(
+            value: counter3Bloc,
+          ),
+        ],
+        child: const HomeTabsView(),
+      );
     });
 
     testWidgets('renders bottom navigation bar with counter labels',
         (tester) async {
-      const state = HomeTab.counter1;
-      when(() => homeTabsCubit.state).thenReturn(state);
-      await tester.pumpApp(
-        BlocProvider.value(
-          value: homeTabsCubit,
-          child: const HomeTabsView(),
-        ),
-      );
+      await tester.pumpApp(widget);
       expect(
         find.widgetWithText(BottomNavigationBar, 'Counter 1'),
         findsOneWidget,
@@ -52,13 +74,7 @@ void main() {
     });
 
     testWidgets('calls tabChanged when Counter 2 tab pressed', (tester) async {
-      when(() => homeTabsCubit.state).thenReturn(HomeTab.counter1);
-      await tester.pumpApp(
-        BlocProvider.value(
-          value: homeTabsCubit,
-          child: const HomeTabsView(),
-        ),
-      );
+      await tester.pumpApp(widget);
 
       await tester.tap(find.widgetWithText(BottomNavigationBar, 'Counter 2'));
 
@@ -67,36 +83,33 @@ void main() {
 
     testWidgets(
       'renders CounterView 1 with subtitle',
-      (tester) => _renderCounterView(tester, homeTabsCubit, 0),
+      (tester) => _renderCounterView(
+          tester, widget, CounterView<Counter1Bloc>, 'Counter 1'),
     );
 
     testWidgets(
       'renders CounterView 2 with subtitle',
-      (tester) => _renderCounterView(tester, homeTabsCubit, 1),
+      (tester) => _renderCounterView(
+          tester, widget, CounterView<Counter2Bloc>, 'Counter 2'),
     );
 
     testWidgets(
       'renders CounterView 3 with subtitle',
-      (tester) => _renderCounterView(tester, homeTabsCubit, 2),
+      (tester) => _renderCounterView(
+          tester, widget, CounterView<Counter3Bloc>, 'Counter 3'),
     );
   });
 }
 
 Future<void> _renderCounterView(
   WidgetTester tester,
-  HomeTabCubit cubit,
-  int index,
+  Widget widget,
+  Type widgetType,
+  String title,
 ) async {
-  const state = HomeTab.counter1;
-  when(() => cubit.state).thenReturn(state);
-  await tester.pumpApp(
-    BlocProvider.value(
-      value: cubit,
-      child: const HomeTabsView(),
-    ),
-  );
+  await tester.pumpApp(widget);
   expect(
-    find.widgetWithText(CounterView, 'Counter ${state.index + 1}'),
+    find.widgetWithText(widgetType, title),
     findsOneWidget,
   );
 }
