@@ -1,11 +1,10 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter_counter_example/home_tabs/models/home_tab.dart';
 
-class HomeTabCubit extends Cubit<int> {
-  HomeTabCubit() : super(0);
+class HomeTabCubit extends Cubit<HomeTab> {
+  HomeTabCubit() : super(HomeTab.counter1);
 
-  static const tabCounts = 3;
-
-  void tabChanged(int position) {
-    emit(position);
+  void tabChanged(HomeTab newTab) {
+    emit(newTab);
   }
 }

@@ -9,6 +9,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_counter_example/counter/counter.dart';
+import 'package:flutter_counter_example/home_tabs/models/home_tab.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -19,7 +20,7 @@ class MockCounterCubit extends MockCubit<int> implements CounterCubit {}
 void main() {
   group('CounterPage', () {
     testWidgets('renders CounterView', (tester) async {
-      await tester.pumpApp(const CounterPage(index: 1));
+      await tester.pumpApp(const CounterPage(tab: HomeTab.counter1));
       expect(find.byType(CounterView), findsOneWidget);
     });
   });

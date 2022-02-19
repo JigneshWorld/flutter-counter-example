@@ -8,22 +8,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_counter_example/counter/counter.dart';
+import 'package:flutter_counter_example/home_tabs/models/home_tab.dart';
 import 'package:flutter_counter_example/l10n/l10n.dart';
 
 class CounterPage extends StatelessWidget {
   const CounterPage({
     Key? key,
-    required this.index,
+    required this.tab,
   }) : super(key: key);
 
-  final int index;
+  final HomeTab tab;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return BlocProvider(
       create: (_) => CounterCubit(),
-      child: CounterView(title: l10n.counterTabTitle(index)),
+      child: CounterView(title: l10n.counterTabTitle(tab.index)),
     );
   }
 }

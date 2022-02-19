@@ -4,12 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_counter_example/counter/counter.dart';
 import 'package:flutter_counter_example/home_tabs/cubit/home_tab_cubit.dart';
 import 'package:flutter_counter_example/home_tabs/home_tab.dart';
+import 'package:flutter_counter_example/home_tabs/models/home_tab.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../helpers/helpers.dart';
 
-class MockHomeTabCubit extends MockCubit<int> implements HomeTabCubit {}
+class MockHomeTabCubit extends MockCubit<HomeTab> implements HomeTabCubit {}
 
 void main() {
   group('HomeTabsPage', () {
@@ -28,7 +29,7 @@ void main() {
 
     testWidgets('renders bottom navigation bar with counter labels',
         (tester) async {
-      const state = 0;
+      const state = HomeTab.counter1;
       when(() => homeTabsCubit.state).thenReturn(state);
       await tester.pumpApp(
         BlocProvider.value(
@@ -48,6 +49,20 @@ void main() {
         find.widgetWithText(BottomNavigationBar, 'Counter 3'),
         findsOneWidget,
       );
+    });
+
+    testWidgets('calls tabChanged when Counter 2 tab pressed', (tester) async {
+      when(() => homeTabsCubit.state).thenReturn(HomeTab.counter1);
+      await tester.pumpApp(
+        BlocProvider.value(
+          value: homeTabsCubit,
+          child: const HomeTabsView(),
+        ),
+      );
+
+      await tester.tap(find.widgetWithText(BottomNavigationBar, 'Counter 2'));
+
+      verify(() => homeTabsCubit.tabChanged(HomeTab.counter2)).called(1);
     });
 
     testWidgets(
@@ -72,7 +87,7 @@ Future<void> _renderCounterView(
   HomeTabCubit cubit,
   int index,
 ) async {
-  const state = 0;
+  const state = HomeTab.counter1;
   when(() => cubit.state).thenReturn(state);
   await tester.pumpApp(
     BlocProvider.value(
@@ -81,7 +96,7 @@ Future<void> _renderCounterView(
     ),
   );
   expect(
-    find.widgetWithText(CounterView, 'Counter ${state + 1}'),
+    find.widgetWithText(CounterView, 'Counter ${state.index + 1}'),
     findsOneWidget,
   );
 }
