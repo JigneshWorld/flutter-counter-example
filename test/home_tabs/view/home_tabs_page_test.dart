@@ -73,6 +73,46 @@ void main() {
       );
     });
 
+    testWidgets('renders CounterView 1 with subtitle', (tester) async {
+      await tester.pumpApp(widget);
+      expect(
+        find.widgetWithText(CounterView<Counter1Bloc>, 'Counter 1'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets(
+        'CounterView 1: calls increment when increment button is tapped',
+        (tester) async {
+      when(() => counter1Bloc.state).thenReturn(0);
+      when(() => counter1Bloc.add(CounterEvent.increment)).thenReturn(null);
+      await tester.pumpApp(widget);
+      await tester.tap(find.byIcon(Icons.add));
+      verify(() => counter1Bloc.add(CounterEvent.increment)).called(1);
+    });
+
+    testWidgets(
+        'CounterView 2: calls decrement when decrement button is tapped',
+        (tester) async {
+      when(() => homeTabsCubit.state).thenReturn(HomeTab.counter2);
+      when(() => counter2Bloc.state).thenReturn(0);
+      when(() => counter2Bloc.add(CounterEvent.decrement)).thenReturn(null);
+      await tester.pumpApp(widget);
+      await tester.tap(find.byIcon(Icons.remove));
+      verify(() => counter2Bloc.add(CounterEvent.decrement)).called(1);
+    });
+
+    testWidgets(
+        'CounterView 3: calls decrement when decrement button is tapped',
+        (tester) async {
+      when(() => homeTabsCubit.state).thenReturn(HomeTab.counter3);
+      when(() => counter3Bloc.state).thenReturn(0);
+      when(() => counter3Bloc.add(CounterEvent.decrement)).thenReturn(null);
+      await tester.pumpApp(widget);
+      await tester.tap(find.byIcon(Icons.remove));
+      verify(() => counter3Bloc.add(CounterEvent.decrement)).called(1);
+    });
+
     testWidgets('calls tabChanged when Counter 2 tab pressed', (tester) async {
       await tester.pumpApp(widget);
 
@@ -81,35 +121,20 @@ void main() {
       verify(() => homeTabsCubit.tabChanged(HomeTab.counter2)).called(1);
     });
 
-    testWidgets(
-      'renders CounterView 1 with subtitle',
-      (tester) => _renderCounterView(
-          tester, widget, CounterView<Counter1Bloc>, 'Counter 1'),
-    );
+    testWidgets('renders CounterView 2 with subtitle', (tester) async {
+      await tester.pumpApp(widget);
+      expect(
+        find.widgetWithText(CounterView<Counter2Bloc>, 'Counter 2'),
+        findsOneWidget,
+      );
+    });
 
-    testWidgets(
-      'renders CounterView 2 with subtitle',
-      (tester) => _renderCounterView(
-          tester, widget, CounterView<Counter2Bloc>, 'Counter 2'),
-    );
-
-    testWidgets(
-      'renders CounterView 3 with subtitle',
-      (tester) => _renderCounterView(
-          tester, widget, CounterView<Counter3Bloc>, 'Counter 3'),
-    );
+    testWidgets('renders CounterView 3 with subtitle', (tester) async {
+      await tester.pumpApp(widget);
+      expect(
+        find.widgetWithText(CounterView<Counter3Bloc>, 'Counter 3'),
+        findsOneWidget,
+      );
+    });
   });
-}
-
-Future<void> _renderCounterView(
-  WidgetTester tester,
-  Widget widget,
-  Type widgetType,
-  String title,
-) async {
-  await tester.pumpApp(widget);
-  expect(
-    find.widgetWithText(widgetType, title),
-    findsOneWidget,
-  );
 }
