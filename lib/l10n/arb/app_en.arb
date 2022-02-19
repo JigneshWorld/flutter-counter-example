@@ -1,7 +1,14 @@
 {
     "@@locale": "en",
-    "counterAppBarTitle": "Counter",
+    "counterAppBarTitle": "Counter App",
     "@counterAppBarTitle": {
         "description": "Text shown in the AppBar of the Counter Page"
+    },
+    "counterTabTitle": "Counter {argument}",
+    "@counterTabTitle": {
+        "description": "Text shown in the Tab of the Counter Page",
+        "placeholders": {
+            "argument": {}
+        }
     }
 }

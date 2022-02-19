@@ -6,7 +6,7 @@
 // https://opensource.org/licenses/MIT.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_counter_example/counter/counter.dart';
+import 'package:flutter_counter_example/home_tabs/home_tab.dart';
 import 'package:flutter_counter_example/l10n/l10n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -27,7 +27,7 @@ class App extends StatelessWidget {
         GlobalMaterialLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const CounterPage(),
+      home: const HomeTabsPage(),
     );
   }
 }
