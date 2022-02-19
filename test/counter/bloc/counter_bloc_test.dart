@@ -10,22 +10,22 @@ import 'package:flutter_counter_example/counter/counter.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group('CounterCubit', () {
+  group('CounterBloc', () {
     test('initial state is 0', () {
-      expect(CounterCubit().state, equals(0));
+      expect(CounterBloc().state, equals(0));
     });
 
-    blocTest<CounterCubit, int>(
+    blocTest<CounterBloc, int>(
       'emits [1] when increment is called',
-      build: CounterCubit.new,
-      act: (cubit) => cubit.increment(),
+      build: CounterBloc.new,
+      act: (bloc) => bloc.add(CounterEvent.increment),
       expect: () => [equals(1)],
     );
 
-    blocTest<CounterCubit, int>(
+    blocTest<CounterBloc, int>(
       'emits [-1] when decrement is called',
-      build: CounterCubit.new,
-      act: (cubit) => cubit.decrement(),
+      build: CounterBloc.new,
+      act: (bloc) => bloc.add(CounterEvent.decrement),
       expect: () => [equals(-1)],
     );
   });
