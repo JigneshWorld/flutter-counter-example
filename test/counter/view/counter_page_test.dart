@@ -19,7 +19,7 @@ class MockCounterCubit extends MockCubit<int> implements CounterCubit {}
 void main() {
   group('CounterPage', () {
     testWidgets('renders CounterView', (tester) async {
-      await tester.pumpApp(const CounterPage());
+      await tester.pumpApp(const CounterPage(index: 1));
       expect(find.byType(CounterView), findsOneWidget);
     });
   });
@@ -37,7 +37,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: counterCubit,
-          child: const CounterView(),
+          child: const CounterView(title: 'Counter View'),
         ),
       );
       expect(find.text('$state'), findsOneWidget);
@@ -50,7 +50,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: counterCubit,
-          child: const CounterView(),
+          child: const CounterView(title: 'Counter View'),
         ),
       );
       await tester.tap(find.byIcon(Icons.add));
@@ -64,7 +64,7 @@ void main() {
       await tester.pumpApp(
         BlocProvider.value(
           value: counterCubit,
-          child: const CounterView(),
+          child: const CounterView(title: 'Counter View'),
         ),
       );
       await tester.tap(find.byIcon(Icons.remove));
