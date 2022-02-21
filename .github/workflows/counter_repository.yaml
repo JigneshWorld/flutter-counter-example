@@ -1,4 +1,4 @@
-name: flutter_counter_example
+name: counter_repository
 
 on: [pull_request, push]
 
@@ -8,3 +8,4 @@ jobs:
     with:
       flutter_channel: stable
       flutter_version: 2.10.2
+      working_directory: "packages/counter_repository"

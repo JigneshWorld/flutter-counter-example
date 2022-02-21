@@ -13,9 +13,24 @@ class HomeTabsPage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => HomeTabCubit()),
-        BlocProvider<Counter1Bloc>(create: (_) => CounterBloc()),
-        BlocProvider<Counter2Bloc>(create: (_) => CounterBloc()),
-        BlocProvider<Counter3Bloc>(create: (_) => CounterBloc()),
+        BlocProvider<Counter1Bloc>(
+          create: (_) => CounterBloc(
+            key: 'counter1',
+            counterRepository: context.read(),
+          ),
+        ),
+        BlocProvider<Counter2Bloc>(
+          create: (_) => CounterBloc(
+            key: 'counter2',
+            counterRepository: context.read(),
+          ),
+        ),
+        BlocProvider<Counter3Bloc>(
+          create: (_) => CounterBloc(
+            key: 'counter3',
+            counterRepository: context.read(),
+          ),
+        ),
       ],
       child: const HomeTabsView(),
     );
@@ -64,12 +79,12 @@ class HomeTabsView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           FloatingActionButton(
-            onPressed: () => _onCounterAction(context, CounterEvent.increment),
+            onPressed: () => _onCounterAction(context, IncrementCounterEvent()),
             child: const Icon(Icons.add),
           ),
           const SizedBox(height: 8),
           FloatingActionButton(
-            onPressed: () => _onCounterAction(context, CounterEvent.decrement),
+            onPressed: () => _onCounterAction(context, DecrementCounterEvent()),
             child: const Icon(Icons.remove),
           ),
         ],
