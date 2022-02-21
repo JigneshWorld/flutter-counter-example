@@ -10,8 +10,13 @@ class HomeTabsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => HomeTabCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => HomeTabCubit()),
+        BlocProvider<Counter1Bloc>(create: (_) => CounterBloc()),
+        BlocProvider<Counter2Bloc>(create: (_) => CounterBloc()),
+        BlocProvider<Counter3Bloc>(create: (_) => CounterBloc()),
+      ],
       child: const HomeTabsView(),
     );
   }
@@ -20,6 +25,21 @@ class HomeTabsPage extends StatelessWidget {
 class HomeTabsView extends StatelessWidget {
   const HomeTabsView({Key? key}) : super(key: key);
 
+  Bloc<CounterEvent, int> _currentCounterBloc(BuildContext context) {
+    switch (context.read<HomeTabCubit>().state) {
+      case HomeTab.counter1:
+        return context.read<Counter1Bloc>();
+      case HomeTab.counter2:
+        return context.read<Counter2Bloc>();
+      case HomeTab.counter3:
+        return context.read<Counter3Bloc>();
+    }
+  }
+
+  void _onCounterAction(BuildContext context, CounterEvent event) {
+    return _currentCounterBloc(context).add(event);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -27,11 +47,31 @@ class HomeTabsView extends StatelessWidget {
       appBar: AppBar(title: Text(l10n.counterAppBarTitle)),
       body: IndexedStack(
         index: context.select((HomeTabCubit cubit) => cubit.state.index),
+        children: const [
+          CounterView<Counter1Bloc>(
+            tab: HomeTab.counter1,
+          ),
+          CounterView<Counter2Bloc>(
+            tab: HomeTab.counter2,
+          ),
+          CounterView<Counter3Bloc>(
+            tab: HomeTab.counter3,
+          )
+        ],
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          for (var i = 0; i < HomeTab.values.length; i++)
-            CounterPage(
-              tab: HomeTab.values[i],
-            ),
+          FloatingActionButton(
+            onPressed: () => _onCounterAction(context, CounterEvent.increment),
+            child: const Icon(Icons.add),
+          ),
+          const SizedBox(height: 8),
+          FloatingActionButton(
+            onPressed: () => _onCounterAction(context, CounterEvent.decrement),
+            child: const Icon(Icons.remove),
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
