@@ -55,11 +55,25 @@ class HomeTabsView extends StatelessWidget {
     return _currentCounterBloc(context).add(event);
   }
 
+  void _onReset(BuildContext context) {
+    context.read<Counter1Bloc>().add(ResetCounterEvent());
+    context.read<Counter2Bloc>().add(ResetCounterEvent());
+    context.read<Counter3Bloc>().add(ResetCounterEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.counterAppBarTitle)),
+      appBar: AppBar(
+        title: Text(l10n.counterAppBarTitle),
+        actions: [
+          IconButton(
+            onPressed: () => _onReset(context),
+            icon: const Icon(Icons.restore),
+          )
+        ],
+      ),
       body: IndexedStack(
         index: context.select((HomeTabCubit cubit) => cubit.state.index),
         children: const [

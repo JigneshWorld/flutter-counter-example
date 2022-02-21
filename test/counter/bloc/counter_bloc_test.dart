@@ -69,5 +69,18 @@ void main() {
         verify(() => counterRepository.onValue(key)).called(1);
       },
     );
+
+    blocTest<CounterBloc, int>(
+      'calls [counterRepo.set(0)] when reset is called',
+      setUp: () {
+        when(() => counterRepository.set(key, 0))
+            .thenAnswer((_) => Future.value());
+      },
+      build: () => CounterBloc(key: key, counterRepository: counterRepository),
+      act: (bloc) => bloc.add(ResetCounterEvent()),
+      verify: (bloc) {
+        verify(() => counterRepository.set(key, 0)).called(1);
+      },
+    );
   });
 }

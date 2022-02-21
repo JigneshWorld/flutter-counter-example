@@ -93,6 +93,15 @@ void main() {
       );
     });
 
+    testWidgets('calls reset on every counter bloc when reset button is tapped',
+        (tester) async {
+      await tester.pumpApp(widget);
+      await tester.tap(find.byIcon(Icons.restore));
+      verify(() => counter1Bloc.add(ResetCounterEvent())).called(1);
+      verify(() => counter2Bloc.add(ResetCounterEvent())).called(1);
+      verify(() => counter3Bloc.add(ResetCounterEvent())).called(1);
+    });
+
     testWidgets(
         'CounterView 1: calls increment when increment button is tapped',
         (tester) async {

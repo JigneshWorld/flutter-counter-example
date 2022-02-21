@@ -31,6 +31,7 @@ class CounterBloc extends Bloc<CounterEvent, int>
     on<IncrementCounterEvent>(_onIncrementCounterEvent);
     on<DecrementCounterEvent>(_onDecrementCounterEvent);
     on<OnValueCounterEvent>(_onOnValueCounterEvent);
+    on<ResetCounterEvent>(_onResetCounterEvent);
   }
 
   final CounterRepository counterRepository;
@@ -56,6 +57,13 @@ class CounterBloc extends Bloc<CounterEvent, int>
     Emitter<int> emit,
   ) {
     emit(event.value);
+  }
+
+  void _onResetCounterEvent(
+    ResetCounterEvent event,
+    Emitter<int> emit,
+  ) {
+    counterRepository.set(key, 0);
   }
 
   @override

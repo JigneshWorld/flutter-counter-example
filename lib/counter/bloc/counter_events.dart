@@ -18,3 +18,5 @@ class OnValueCounterEvent extends CounterEvent {
   @override
   List<Object?> get props => [...super.props, value];
 }
+
+class ResetCounterEvent extends CounterEvent {}
