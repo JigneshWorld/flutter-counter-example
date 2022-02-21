@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:counter_repository/counter_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_counter_example/counter/counter.dart';
@@ -16,9 +17,20 @@ class MockCounterBloc extends MockBloc<CounterEvent, int>
     implements CounterBloc {}
 
 void main() {
+  late CounterRepository counterRepository;
+
+  setUp(() {
+    counterRepository = MockCounterRepository();
+    when(() => counterRepository.onValue(any()))
+        .thenAnswer((_) => const Stream.empty());
+  });
+
   group('HomeTabsPage', () {
     testWidgets('renders HomeTabsView', (tester) async {
-      await tester.pumpApp(const HomeTabsPage());
+      await tester.pumpApp(
+        const HomeTabsPage(),
+        counterRepository: counterRepository,
+      );
       expect(find.byType(HomeTabsView), findsOneWidget);
     });
   });
@@ -85,10 +97,10 @@ void main() {
         'CounterView 1: calls increment when increment button is tapped',
         (tester) async {
       when(() => counter1Bloc.state).thenReturn(0);
-      when(() => counter1Bloc.add(CounterEvent.increment)).thenReturn(null);
+      when(() => counter1Bloc.add(IncrementCounterEvent())).thenReturn(null);
       await tester.pumpApp(widget);
       await tester.tap(find.byIcon(Icons.add));
-      verify(() => counter1Bloc.add(CounterEvent.increment)).called(1);
+      verify(() => counter1Bloc.add(IncrementCounterEvent())).called(1);
     });
 
     testWidgets(
@@ -96,10 +108,10 @@ void main() {
         (tester) async {
       when(() => homeTabsCubit.state).thenReturn(HomeTab.counter2);
       when(() => counter2Bloc.state).thenReturn(0);
-      when(() => counter2Bloc.add(CounterEvent.decrement)).thenReturn(null);
+      when(() => counter2Bloc.add(DecrementCounterEvent())).thenReturn(null);
       await tester.pumpApp(widget);
       await tester.tap(find.byIcon(Icons.remove));
-      verify(() => counter2Bloc.add(CounterEvent.decrement)).called(1);
+      verify(() => counter2Bloc.add(DecrementCounterEvent())).called(1);
     });
 
     testWidgets(
@@ -107,10 +119,10 @@ void main() {
         (tester) async {
       when(() => homeTabsCubit.state).thenReturn(HomeTab.counter3);
       when(() => counter3Bloc.state).thenReturn(0);
-      when(() => counter3Bloc.add(CounterEvent.decrement)).thenReturn(null);
+      when(() => counter3Bloc.add(DecrementCounterEvent())).thenReturn(null);
       await tester.pumpApp(widget);
       await tester.tap(find.byIcon(Icons.remove));
-      verify(() => counter3Bloc.add(CounterEvent.decrement)).called(1);
+      verify(() => counter3Bloc.add(DecrementCounterEvent())).called(1);
     });
 
     testWidgets('calls tabChanged when Counter 2 tab pressed', (tester) async {

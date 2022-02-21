@@ -6,27 +6,68 @@
 // https://opensource.org/licenses/MIT.
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:counter_repository/counter_repository.dart';
 import 'package:flutter_counter_example/counter/counter.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+
+import '../../helpers/helpers.dart';
 
 void main() {
   group('CounterBloc', () {
+    late CounterRepository counterRepository;
+    const key = 'counter';
+
+    setUp(() {
+      counterRepository = MockCounterRepository();
+      when(() => counterRepository.onValue(key))
+          .thenAnswer((_) => const Stream.empty());
+    });
+
     test('initial state is 0', () {
-      expect(CounterBloc().state, equals(0));
+      expect(
+        CounterBloc(key: key, counterRepository: counterRepository).state,
+        equals(0),
+      );
     });
 
     blocTest<CounterBloc, int>(
-      'emits [1] when increment is called',
-      build: CounterBloc.new,
-      act: (bloc) => bloc.add(CounterEvent.increment),
-      expect: () => [equals(1)],
+      'calls [counterRepo.set(1)] when increment is called',
+      setUp: () {
+        when(() => counterRepository.set(key, 1))
+            .thenAnswer((_) => Future.value());
+      },
+      build: () => CounterBloc(key: key, counterRepository: counterRepository),
+      act: (bloc) => bloc.add(IncrementCounterEvent()),
+      verify: (bloc) {
+        verify(() => counterRepository.set(key, 1)).called(1);
+      },
     );
 
     blocTest<CounterBloc, int>(
-      'emits [-1] when decrement is called',
-      build: CounterBloc.new,
-      act: (bloc) => bloc.add(CounterEvent.decrement),
-      expect: () => [equals(-1)],
+      'calls [counterRepo.set(-1)] when decrement is called',
+      setUp: () {
+        when(() => counterRepository.set(key, -1))
+            .thenAnswer((_) => Future.value());
+      },
+      build: () => CounterBloc(key: key, counterRepository: counterRepository),
+      act: (bloc) => bloc.add(DecrementCounterEvent()),
+      verify: (bloc) {
+        verify(() => counterRepository.set(key, -1)).called(1);
+      },
+    );
+
+    blocTest<CounterBloc, int>(
+      'emits [5] when counterRepo.onValue emits [5]',
+      setUp: () {
+        when(() => counterRepository.onValue(key))
+            .thenAnswer((_) => Stream.fromIterable([5]));
+      },
+      build: () => CounterBloc(key: key, counterRepository: counterRepository),
+      expect: () => [equals(5)],
+      verify: (bloc) {
+        verify(() => counterRepository.onValue(key)).called(1);
+      },
     );
   });
 }
